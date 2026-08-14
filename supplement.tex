@@ -1,0 +1,183 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xr}
+\externaldocument{main-paper-labels}
+
+\title{Online Supplement to ``On the Network Coding Capacity of Wireless Multicast Networks under One-Hop Interference''}
+\author{Xiaohong Cai and Raymond W. Yeung}
+\date{}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}[lemma]
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newcommand{\LP}{\mathrm{LP}}
+\newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Finite Matching-Based Verification}
+
+For each reduced butterfly-like configuration, we construct the associated directed hypergraph \(H=(\mathcal N,\mathcal E_H)\). A feasible simultaneous transmission set is a matching of \(H\), i.e., a set of hyperedges no two of which are incident to a common node. Let \(\Sigma\) denote the set of all matchings of \(H\), including the empty matching, and let \(\omega_\sigma\) be the fraction of the resource assigned to \(\sigma\in\Sigma\). All matchings are retained because extending a nonmaximal matching may increase an inner-edge capacity and violate the constraint that fixes this capacity to \(1/3\).
+
+For each hyperedge \(e=(u,\mathcal J)\), introduce a dummy node \(d_e\), an arc \((u,d_e)\), and an arc \((d_e,v)\) for every \(v\in\mathcal J\). Let \(\mathcal A\) denote the arc set of the resulting dummy-node graph, and let \(e(a)\) denote the hyperedge associated with an arc \(a\in\mathcal A\). For each destination \(t\in\{X,Y\}\), let \(\mathcal C_D^{st}\) denote the collection of all source-side node sets of \(s\)-\(t\) cuts in the dummy-node graph. For \(\mathcal S\in\mathcal C_D^{st}\), let \(\delta^+(\mathcal S)\) be the set of arcs leaving \(\mathcal S\). Finally, let \(\mathcal E_{\mathrm{inner}}\) contain all directed edges on the inner subpaths \(c,d,g,h\), and also those on \(i\) when \(I\neq D\).
+
+For each reduced configuration, we solve the following linear program:
+\[
+\begin{aligned}
+\text{maximize}\quad
+& R\\
+\text{subject to}\quad
+& \sum_{\sigma\in\Sigma}\omega_\sigma=1,\\
+& c_e=\sum_{\sigma\in\Sigma:e\in\sigma}\omega_\sigma,
+&& e\in\mathcal E_H,\\
+& R\le\sum_{a\in\delta^+(\mathcal S)}c_{e(a)},
+&& \substack{t\in\{X,Y\},\\ \mathcal S\in\mathcal C_D^{st}},\\
+& \sum_{\substack{\sigma\in\Sigma:\,\exists (u,\mathcal J)\in\sigma\\ v\in\mathcal J}}\omega_\sigma=\frac13,
+&& (u,v)\in\mathcal E_{\mathrm{inner}},\\
+& \omega_\sigma\ge0,
+&& \sigma\in\Sigma,\\
+& 0\le R\le1.
+\end{aligned}
+\]
+The cut constraints ensure that \(R\) does not exceed the capacity of any \(s\)-\(t\) cut for either destination. Thus, for each resource allocation, the largest feasible \(R\) is the smaller of the two destination mincuts. Since the number of cuts can be exponential, the implementation generates these constraints iteratively. It first solves the linear program with the cuts generated so far, computes a minimum \(s\)-\(t\) cut for each destination under the resulting hyperedge capacities, and adds any cut whose capacity is smaller than \(R\). This process terminates when neither destination has a violated cut constraint.
+
+The exhaustive computation examines all \(2^4 3^4=1296\) reduced configurations for \(I=D\) and all \(2^4 3^5=3888\) reduced configurations for \(I\neq D\), for a total of \(5184\) configurations. For the latter case, the conditions of Corollary~\ref{cor:nec_struct_5_6_noncontracted} are checked by replacing \(n_g\) and \(n_h\) with
+\[
+n_g'=n_g+n_i+1,\qquad n_h'=n_h+n_i+1.
+\]
+All \(5184\) linear programs are solved to optimality. For \(I=D\), exactly \(1072\) of the \(1296\) configurations satisfy the structural conditions, and the same \(1072\) configurations have LP value at least \(5/6\) under the inner-subpath constraints. For \(I\neq D\), the corresponding number is \(3866\) out of \(3888\). Thus, the output contains no mismatch between the structural conditions and the LP test. Together with the \(5/6\) upper bound for butterfly-like networks, this shows that every reduced configuration satisfying the conditions has LP value exactly \(5/6\). The implementation and complete machine-readable output are provided with this supplement.
+
+\section{Proof of Theorem~\ref{theo: 2-and-3 paths}}\label{Appendix: Proof_of_three_path_disjoint}
+
+Let \(\mathcal T=\{X,Y\}\). Without loss of generality, assume that \(X\)
+admits two disjoint routing paths \(P_X\) and \(\bar P_X\) in \(G_0\), and \(Y\)
+admits three disjoint routing paths in \(G_0\),
+\(Q_1\), \(Q_2\), and \(Q_3\).
+We use the subpath notation \(P^{ab}\) defined in Section~\ref{sec: Structural Preliminaries}. For ease of notation, when \(a=b\), \(P^{ab}\) is omitted in path constructions.
+
+Since \(G_0\) is acyclic, fix a topological order \(\prec\) of its nodes.
+Thus every directed path visits nodes in increasing order under \(\prec\).
+Throughout this proof, whenever we compare two nodes lying on the same directed
+path, the comparison is with respect to this order restricted to that path.
+In particular, when \(N(Q)\cap \mathcal S\neq\emptyset\), the last node of a
+path \(Q\) in a node set \(\mathcal S\) means the \(\prec\)-maximal node in
+\(N(Q)\cap \mathcal S\).
+
+The proof repeatedly uses the following consequence of acyclicity. If two directed paths \(P_1\) and \(P_2\) in a directed acyclic graph share two nodes, then these nodes appear in the same order on both paths. Otherwise, the subpath between the two nodes on one path and the reverse-ordered subpath on the other path would form a directed cycle. Hence, a common node that is last on one of the two paths is also last on the other.
+
+For each \(i\in\{1,2,3\}\), let \(M_i\) be the last node of \(Q_i\) in
+\[
+N(P_X)\cup N(\bar P_X).
+\]
+If \(M_i\neq s\), then \(M_i\) lies on exactly one of \(P_X\) and \(\bar P_X\), since \(P_X\) and \(\bar P_X\) are disjoint except at \(s\) and \(X\), and a routing path to \(Y\) cannot pass through the destination \(X\). We denote this unique path in \(\{P_X,\bar P_X\}\) by \(\LP(Q_i)\).
+
+The proof below constructs four routing paths: two disjoint paths connecting \(s\) to \(X\), and two disjoint paths connecting \(s\) to \(Y\). In each case, by the subgraph formed by these paths we mean the edge-union subgraph whose node set and edge set are exactly the unions of the nodes and edges of the four selected paths. Hence, by Definition~\ref{def: routing graph}, it is a routing graph, and since all selected paths lie in \(G_0\), it is a routing subgraph of \(G_0\). It remains to show that this routing subgraph contains no intersection node. Since the two paths to the same destination are disjoint by construction, we only need to check pairs consisting of one path to \(X\) and one path to \(Y\). By Propositions~\ref{prop: intersection if not disjoint and multicast} and~\ref{prop: Multicast have no intersection node}, it is enough to verify that each such pair is either disjoint or a multicast.
+
+We now prove the theorem by considering how the nodes \(M_1\), \(M_2\), and \(M_3\) are distributed over \(s\), \(P_X\), and \(\bar P_X\).
+
+\smallskip
+\noindent\textbf{Case 1.}
+At least two of \(M_1\), \(M_2\), and \(M_3\) are equal to \(s\). Without loss of generality, let \(M_1=M_2=s\). Then neither \(Q_1\) nor \(Q_2\) has a node in \(N(P_X)\cup N(\bar P_X)\) other than \(s\). Thus
+\[
+P_X,\quad \bar P_X,\quad Q_1,\quad Q_2
+\]
+already form the required four paths.
+
+\smallskip
+\noindent\textbf{Case 2.}
+Case 1 does not occur, and two non-source nodes among \(M_1\), \(M_2\), and \(M_3\) lie on different paths in \(\{P_X,\bar P_X\}\). That is, there exist \(i\neq j\) such that \(M_i,M_j\neq s\) and
+\[
+\LP(Q_i)\neq \LP(Q_j).
+\]
+Without loss of generality, assume that \(\LP(Q_i)=P_X\) and \(\LP(Q_j)=\bar P_X\). Define
+\[
+Q_i'=(P_X^{sM_i},Q_i^{M_iY}),
+\qquad
+Q_j'=(\bar P_X^{sM_j},Q_j^{M_jY}).
+\]
+The paths \(Q_i'\) and \(Q_j'\) are disjoint. Indeed, \(P_X^{sM_i}\) and \(\bar P_X^{sM_j}\) lie on the disjoint paths \(P_X\) and \(\bar P_X\), respectively, and \(Q_i^{M_iY}\) and \(Q_j^{M_jY}\) lie on the disjoint paths \(Q_i\) and \(Q_j\), respectively. By the definition of \(M_i\) and \(M_j\), \(Q_i^{M_iY}\) shares no node with \(P_X\cup\bar P_X\) except \(M_i\), and \(Q_j^{M_jY}\) shares no node with \(P_X\cup\bar P_X\) except \(M_j\). Moreover, \(P_X\) and \(Q_i'\) form a multicast, \(\bar P_X\) and \(Q_j'\) form a multicast, and the two remaining pairs connecting to different destinations are disjoint. Hence,
+\[
+P_X,\quad \bar P_X,\quad Q_i',\quad Q_j'
+\]
+form the required four paths.
+
+\smallskip
+\noindent\textbf{Case 3.}
+Neither Case 1 nor Case 2 occurs. Since Case 1 does not occur, at most one of \(M_1\), \(M_2\), and \(M_3\) is \(s\). Since Case 2 does not occur, all non-source \(M_i\)'s lie on the same path in \(\{P_X,\bar P_X\}\). Without loss of generality, assume this path is \(P_X\), and index \(Q_1,Q_2,Q_3\) so that
+\[
+M_1<M_2<M_3
+\qquad\text{on }P_X,
+\]
+where \(M_1=s\) is allowed.
+
+For each \(i\), let \(L_i\) be the last node of \(Q_i\) on \(\bar P_X\), with \(L_i=s\) if there is no non-source common node. Since \(M_i\) is the last node of \(Q_i\) in \(N(P_X)\cup N(\bar P_X)\), \(L_i\) is also the last node of the whole path \(Q_i\) on \(\bar P_X\).
+
+\smallskip
+\noindent\emph{Subcase 3a.}
+There exist \(i<j\) such that \(L_j\le L_i\) on \(\bar P_X\). Define
+\[
+P_X'=(Q_j^{sM_j},P_X^{M_jX}),
+\qquad
+\bar P_X'=(Q_i^{sL_i},\bar P_X^{L_iX}),
+\]
+and keep
+\[
+P_Y'=Q_j,\qquad \bar P_Y'=Q_i.
+\]
+The paths \(P_X'\) and \(\bar P_X'\) are disjoint. The subpaths \(Q_j^{sM_j}\) and \(Q_i^{sL_i}\) lie on the disjoint paths \(Q_j\) and \(Q_i\), respectively, while \(P_X^{M_jX}\) and \(\bar P_X^{L_iX}\) lie on the disjoint paths \(P_X\) and \(\bar P_X\), respectively. It remains only to exclude common nodes between \(Q_i^{sL_i}\) and \(P_X^{M_jX}\), and between \(Q_j^{sM_j}\) and \(\bar P_X^{L_iX}\). Since \(M_i<M_j\) and \(M_i\) is the last node of \(Q_i\) on \(P_X\), the path \(Q_i^{sL_i}\) shares no node with \(P_X^{M_jX}\). Since \(L_j\le L_i\) and \(L_j\) is the last node of \(Q_j\) on \(\bar P_X\), the path \(Q_j^{sM_j}\) shares no internal node with \(\bar P_X^{L_iX}\). Thus \(P_X'\) and \(\bar P_X'\) are disjoint.
+
+The two paths to \(Y\), \(Q_i\) and \(Q_j\), are disjoint by assumption. For pairs connecting to different destinations, \(P_X'\) and \(Q_j\) form a multicast, and \(\bar P_X'\) and \(Q_i\) are either disjoint or form a multicast. The path \(P_X'\) is disjoint from \(Q_i\), because \(Q_i\) is disjoint from \(Q_j\) and shares no node with \(P_X^{M_jX}\). The path \(\bar P_X'\) is disjoint from \(Q_j\), because \(Q_j\) is disjoint from \(Q_i\) and shares no internal node with \(\bar P_X^{L_iX}\). Hence, these four paths contain no intersection node, and the theorem follows in this subcase.
+
+\smallskip
+\noindent\emph{Subcase 3b.}
+No pair \(i<j\) satisfies \(L_j\le L_i\) on \(\bar P_X\). This implies
+\[
+L_1<L_2<L_3
+\qquad\text{on }\bar P_X.
+\]
+
+We inspect \(Q_3\) backwards from \(M_3\). Set \(A_0=M_3\). Given \(A_{k-1}\neq s\), let \(B_k\) be the last node of \(Q_3^{sA_{k-1}}\) on \(\bar P_X\), with \(B_k=s\) if there is no non-source common node. Then let \(A_k\) be the last node of \(Q_3^{sB_k}\) on \(P_X\), with \(A_k=s\) if there is no non-source common node. By acyclicity, the sequence \(A_0,A_1,A_2,\ldots\) is strictly decreasing on \(P_X\) until it reaches \(s\). Since \(A_0=M_3>M_2\), and since no \(A_k\) can equal \(M_2\) because \(Q_2\) and \(Q_3\) are disjoint, there is a first index \(r\ge 1\) such that
+\[
+A_r<M_2<A_{r-1}
+\qquad\text{on }P_X.
+\]
+Also \(B_r\neq L_2\), because \(L_2\neq s\), and equality would make \(Q_2\) and \(Q_3\) share the non-source node \(L_2\).
+Thus either \(B_r>L_2\) or \(B_r<L_2\) on \(\bar P_X\).
+
+\smallskip
+\noindent\emph{Subcase 3b(i).}
+\(B_r>L_2\) on \(\bar P_X\). Define
+\[
+P_X'=(Q_2^{sM_2},P_X^{M_2X}),
+\qquad
+\bar P_X'=(Q_3^{sB_r},\bar P_X^{B_rX}),
+\]
+and keep
+\[
+P_Y'=Q_2,\qquad \bar P_Y'=Q_1.
+\]
+The two paths to \(X\) are disjoint. The subpaths \(Q_2^{sM_2}\) and \(Q_3^{sB_r}\) lie on the disjoint paths \(Q_2\) and \(Q_3\), respectively. The subpaths \(P_X^{M_2X}\) and \(\bar P_X^{B_rX}\) lie on the disjoint paths \(P_X\) and \(\bar P_X\), respectively. The remaining possible common nodes are excluded by \(L_2<B_r\) and \(A_r<M_2\). The two paths to \(Y\), \(Q_2\) and \(Q_1\), are disjoint. For pairs connecting to different destinations, \(P_X'\) and \(Q_2\) form a multicast. By the definition of \(L_2\), the path \(Q_2\) shares no node with \(\bar P_X^{B_rX}\), since \(L_2<B_r\). By the definition of \(M_1\), the path \(Q_1\) shares no node with \(P_X^{M_2X}\), since \(M_1<M_2\). By the definition of \(L_1\), the path \(Q_1\) shares no node with \(\bar P_X^{B_rX}\), since \(L_1<L_2<B_r\). Hence, the four paths contain no intersection node.
+
+\smallskip
+\noindent\emph{Subcase 3b(ii).}
+\(B_r<L_2\) on \(\bar P_X\). Define
+\[
+P_X'=(Q_3^{sA_{r-1}},P_X^{A_{r-1}X}),
+\qquad
+\bar P_X'=(Q_2^{sL_2},\bar P_X^{L_2X}),
+\]
+and keep
+\[
+P_Y'=Q_2,\qquad \bar P_Y'=Q_1.
+\]
+The two paths to \(X\) are disjoint. The subpaths \(Q_3^{sA_{r-1}}\) and \(Q_2^{sL_2}\) lie on the disjoint paths \(Q_3\) and \(Q_2\), respectively. The subpaths \(P_X^{A_{r-1}X}\) and \(\bar P_X^{L_2X}\) lie on the disjoint paths \(P_X\) and \(\bar P_X\), respectively. The only possible common nodes are excluded by \(M_2<A_{r-1}\) and \(B_r<L_2\). The two paths to \(Y\), \(Q_2\) and \(Q_1\), are disjoint. For pairs connecting to different destinations, \(\bar P_X'\) and \(Q_2\) form a multicast. By the definition of \(M_2\), the path \(Q_2\) shares no node with \(P_X^{A_{r-1}X}\), since \(M_2<A_{r-1}\). By the definition of \(M_1\), the path \(Q_1\) shares no node with \(P_X^{A_{r-1}X}\), since \(M_1<M_2<A_{r-1}\). By the definition of \(L_1\), the path \(Q_1\) shares no node with \(\bar P_X^{L_2X}\), since \(L_1<L_2\). Hence, the four paths contain no intersection node.
+
+In all cases, we obtain two disjoint routing paths in \(G_0\) to each destination, and the subgraph formed by these paths contains no intersection node. This completes the proof.
+
+\end{document}

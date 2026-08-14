@@ -1,0 +1,33 @@
+{
+  "complete_enumeration": true,
+  "elapsed_seconds": 941.6620127999922,
+  "matching_cases": 5184,
+  "mismatch_count": 0,
+  "optimal_cases": 5184,
+  "target": 0.8333333333333334,
+  "tolerance": 1e-07,
+  "total_cases": 5184,
+  "variants": {
+    "I_eq_D": {
+      "achieved_cases": 1072,
+      "condition_true_cases": 1072,
+      "matching_cases": 1296,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "optimal_cases": 1296,
+      "total_cases": 1296,
+      "variant": "I_eq_D"
+    },
+    "I_neq_D": {
+      "achieved_cases": 3866,
+      "condition_true_cases": 3866,
+      "matching_cases": 3888,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "optimal_cases": 3888,
+      "total_cases": 3888,
+      "variant": "I_neq_D"
+    }
+  },
+  "workers": 4
+}
